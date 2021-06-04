@@ -79,6 +79,12 @@ void close() {
 	SDL_Quit();
 }
 
+void clearColor(SDL_Color *c) {
+    c->r = 0x00;
+    c->g = 0x00;
+    c->b = 0x00;
+}
+
 int main(int argc, char* args[]) {
     // check it opened
     if (!init()) {
@@ -111,14 +117,14 @@ int main(int argc, char* args[]) {
                     }
                 }
                 //Touch down
-                else if( e.type == SDL_FINGERDOWN )
+                else if (e.type == SDL_FINGERDOWN)
                 {
                     touchLocation.x = e.tfinger.x * gScreenRect.w;
                     touchLocation.y = e.tfinger.y * gScreenRect.h;
                     //currentTexture = &gTouchDownTexture;
-                    //SDL_SetRenderDrawColor(gRenderer, 0xFF, 0x00, 0xFF, 0xFF);
 
-                    laste = e.type;
+                    clearColor(&color);
+                    color.r = 0xFF;
                 }
                 //Touch motion
                 else if( e.type == SDL_FINGERMOTION )
@@ -126,9 +132,9 @@ int main(int argc, char* args[]) {
                     touchLocation.x = e.tfinger.x * gScreenRect.w;
                     touchLocation.y = e.tfinger.y * gScreenRect.h;
                     //currentTexture = &gTouchMotionTexture;
-                    //SDL_SetRenderDrawColor(gRenderer, 0x00, 0xFF, 0xFF, 0xFF);
 
-                    laste = e.type;
+                    clearColor(&color);
+                    color.g = 0xFF;
                 }
                 //Touch release
                 else if( e.type == SDL_FINGERUP )
@@ -136,9 +142,30 @@ int main(int argc, char* args[]) {
                     touchLocation.x = e.tfinger.x * gScreenRect.w;
                     touchLocation.y = e.tfinger.y * gScreenRect.h;
                     //currentTexture = &gTouchUpTexture;
-                    //SDL_SetRenderDrawColor(gRenderer, 0xFF, 0x00, 0x00, 0xFF);
 
-                    laste = e.type;
+                    clearColor(&color);
+                    color.b = 0xFF;
+                }
+                else if (e.type == SDL_MOUSEBUTTONDOWN) {
+                    touchLocation.x = e.button.x;
+                    touchLocation.y = e.button.y;
+                    
+                    clearColor(&color);
+                    color.r = 0xFF;
+                }
+                else if (e.type == SDL_MOUSEMOTION) {
+                    touchLocation.x = e.motion.x;
+                    touchLocation.y = e.motion.y;
+                    
+                    clearColor(&color);
+                    color.g = 0xFF;
+                }
+                else if (e.type == SDL_MOUSEBUTTONUP) {
+                    touchLocation.x = e.button.x;
+                    touchLocation.y = e.button.y;
+                    
+                    clearColor(&color);
+                    color.b = 0xFF;
                 }
 
                 //Clear screen
@@ -151,13 +178,7 @@ int main(int argc, char* args[]) {
                 box.x = touchLocation.x - 100 / 2;
                 box.y = touchLocation.y - 100 / 2;
 
-                if (laste == SDL_FINGERDOWN) {
-                    SDL_SetRenderDrawColor( gRenderer, 0xFF, 0x00, 0x00, 0xFF );
-                } else if( laste == SDL_FINGERMOTION ) {
-                    SDL_SetRenderDrawColor( gRenderer, 0x00, 0xFF, 0x00, 0xFF );
-                } else if( laste == SDL_FINGERUP ) {
-                    SDL_SetRenderDrawColor( gRenderer, 0x00, 0x00, 0xFF, 0xFF );
-                }
+                SDL_SetRenderDrawColor(gRenderer, color.r, color.g, color.b, 0xFF);
 
                 SDL_RenderFillRect(gRenderer, &box);
 
